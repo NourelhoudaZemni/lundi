@@ -4,7 +4,7 @@ const DonationSchema = new mongoose.Schema({
 
     title: {type: String, required: [true, "can't be blank"]},
  
- 
+ anonyme:{type:Boolean, default: false},
    
   avatar: {
     type: String,
@@ -13,7 +13,7 @@ cloudinary_id: {
     type: String,
 },
 
-    user: [{ type: mongoose.Schema.Types.ObjectId, ref : "User"}] ,
+    user: { type: mongoose.Schema.Types.ObjectId, ref : "user"} ,
     
     event: { type: mongoose.Schema.Types.ObjectId, ref : "Event"}
         

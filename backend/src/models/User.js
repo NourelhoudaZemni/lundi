@@ -52,6 +52,12 @@ cloudinary_user: {
       ref: "Product",
     },
   ], 
+    wishlist: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Product",
+    },
+  ],
   reset_password_token: {
     type: String,
     required: false,

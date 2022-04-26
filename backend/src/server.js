@@ -4,8 +4,14 @@ const path = require('path');
 const cors = require("cors");
 const db = require("./config/db");
 const productRoutes = require("./routings/product");
-const userRoutes = require("./routings/user");
+const userRoutes = require("./routings/user"); 
+const brandRoutes = require("./routings/brand")
+const categoryRoutes = require("./routings/category")
+//////////Coupon
 const orderRoutes = require("./routings/order");
+const couponRoutes = require("./routings/coupon");
+const stripeRoutes = require("./routings/stripe");
+//////////////
 
 const User = require("./models/User");
 
@@ -26,13 +32,15 @@ const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
 const app = express();
 
 production && app.use(express.static(path.join(__dirname, "../client/build")));
-
+app.use('/uploads',express.static('uploads'))
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
     extended: true,
   })
 );
+app.use(express.json())
+
 const users = [];
 //login
 function upsert(array, item) {
@@ -56,10 +64,17 @@ app.post('/api/google-login', async (req, res) => {
 
 // database connection
 db.makeDb();
+///////COUPON ORDER
+app.use("/order", orderRoutes);
+app.use("/coupon", couponRoutes);
+app.use("/stripe", stripeRoutes);
+
+/////////////
 
 app.use("/products", productRoutes);
-app.use("/user", userRoutes);
-app.use("/order", orderRoutes);
+app.use("/user", userRoutes); 
+app.use("/brand", brandRoutes);
+app.use("/category", categoryRoutes);
 
 app.use("/donation", donationRoutes);
 app.use("/event", eventRoutes);

@@ -26,7 +26,7 @@ exports.add = async (req,res) => {
         }
     ) 
         await event.save();
-        res.send("event added");
+        res.status(201).send("event added");
 
     }catch(err){
         res.send(err);
@@ -137,13 +137,27 @@ exports.getUserEvent = async(req,res) => {
 ////////////////////////////////////////////////////
  
 exports.findById2 = async(req,res) => {
-    await Event.findOne({_id:req.params.id}).populate('User').populate("Donations").then(Event=>{
+    await Event.findOne({_id:req.params.id}).populate('user').populate({path:"Donations",populate:{path:"user"}}).then(Event=>{
+   
         return res.status(200).json(Event);
     }).catch(err=>{
         return res.json(err);
     });
 }
-
+exports.getEventsByTime=async (req,res)=>{
+    try{
+    const result= await Event.find({CreatedAt: {
+        
+        $gte: new Date(req.query.from).toISOString(),
+        $lt: new Date(req.query.to).toISOString(),
+       
+      }}).sort({CreatedAt:-1})
+    res.status(200).send({count:result.length})
+    }catch(err){
+        console.log(err)
+res.send(err)
+    }
+}
 
 exports.delete = async(req,res)=>{
     await Event.deleteOne({_id:req.params.id})
@@ -158,19 +172,17 @@ exports.put= async(req, res) => {
 const idEvent = req.query.idEvent
     try {
         // Upload image to cloudinary
-        const result = await cloudinary.uploader.upload(req.file.path);
-        
+        let result=null;
+        if(req.file)
+       { result = await cloudinary.uploader.upload(req.file.path);}
+        const event = await Event.findById(idEvent)
+      
         const updatedEvent =await Event.findByIdAndUpdate(idEvent, 
             {
                 $set:{
-                title:req.body.title,
-                description:req.body.description, 
-                location:req.body.location,
-                Startdate: req.body.Startdate,
-                Enddate: req.body.Enddate,
-                user:req.body.user, 
-                avatar: result.secure_url,
-                cloudinary_id: result.public_id,}
+                    ...req.body,
+                    avatar: result?result.secure_url:event.avatar,
+                  cloudinary_id: result?result.public_id:event.cloudinary_id,}
             }
            
         );

@@ -21,6 +21,7 @@ router.post ("/new",upload.single("image"),async (req,res) => {
          var donation=new Donation(
         
          {   title:req.body.title,
+            anonyme: req.body.anonyme,
             user:req.body.user, 
             event: req.body.event,
             avatar: result.secure_url,

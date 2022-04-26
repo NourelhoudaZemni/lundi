@@ -18,7 +18,7 @@ router.get('/countLikes',EventController.getLikesCount);
 router.post('/addLikes',EventController.addLikes);
 router.get('/all',EventController.getAll);
 router.get('/getUserEvent',EventController.getUserEvent);
-
+router.get('/getEventsByTime',EventController.getEventsByTime);
 
 router.get('/get/:id',EventController.findById2);
 router.delete('/delete/:id',EventController.delete);
